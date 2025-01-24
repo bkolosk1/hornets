@@ -18,7 +18,7 @@ class HorNet(nn.Module):
         super(HorNet, self).__init__()
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
-        layers = []
+        #layers = []
 
         self.num_features = num_features
         self.num_tars = outpt

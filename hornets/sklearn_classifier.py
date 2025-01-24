@@ -1,6 +1,5 @@
 import numpy as np
 import logging
-import itertools
 from typing import Optional, List, Any
 
 import torch
