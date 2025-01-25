@@ -49,10 +49,22 @@ def test_xor():
 
 def test_not():
     """
-    Test the HorNetClassifier on the XOR operation.
+    Test the HorNetClassifier on the NOT operation.
     Ensures that the classifier achieves near-perfect accuracy.
     """
     X_train, X_test, y_train, y_test = get_data("not")
+    model = get_model()
+    model.fit(X_train, y_train)
+    acc = accuracy_score(model.predict(X_test), y_test)
+
+    assert acc == pytest.approx(1.0)
+
+def test_and():
+    """
+    Test the HorNetClassifier on the AND operation.
+    Ensures that the classifier achieves near-perfect accuracy.
+    """
+    X_train, X_test, y_train, y_test = get_data("and")
     model = get_model()
     model.fit(X_train, y_train)
     acc = accuracy_score(model.predict(X_test), y_test)
