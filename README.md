@@ -1,9 +1,6 @@
 # HorNets
 
- [build](https://github.com/bkolosk1/hornets/actions/workflows/python-install.yml/badge.svg)
- [lint](https://github.com/bkolosk1/hornets/actions/workflows/lint.yml/badge.svg)
-
- [test](https://github.com/bkolosk1/hornets/actions/workflows/pytest.yml/badge.svg)
+![build](https://github.com/bkolosk1/hornets/actions/workflows/python-install.yml/badge.svg)  ![lint](https://github.com/bkolosk1/hornets/actions/workflows/lint.yml/badge.svg) ![test](https://github.com/bkolosk1/hornets/actions/workflows/pytest.yml/badge.svg)
 
 
 
