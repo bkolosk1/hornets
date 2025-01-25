@@ -1,0 +1,38 @@
+name: Test Installation
+
+on:
+  push:
+    paths:
+      - 'pyproject.toml'
+      - 'poetry.lock'
+  pull_request:
+    paths:
+      - 'pyproject.toml'
+      - 'poetry.lock'
+
+jobs:
+  test-installation:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "::add-path::${HOME}/.local/bin"
+
+    - name: Install dependencies
+      run: |
+        poetry install
+        poetry check
+
+    - name: Verify installation
+      run: |
+        poetry run python -c "import hornets; print('Module imported successfully')"
