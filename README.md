@@ -27,7 +27,7 @@ pip install git+git@github.com:bkolosk1/hornets.git
 ## Usage
 
 
-You can run `examples/example.py` 
+You can run `examples/examples.py` 
 
 
 
