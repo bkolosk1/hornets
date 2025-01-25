@@ -19,6 +19,7 @@ class E2EDatasetLoader(Dataset):
         return instance.to(torch.float)
 
 
+
 def generate_synthetic_data(num_features, num_instances=128, operation="xor", random_seed = 42):
     """
     Generate synthetic datasets (X and y) for a specific logical operation.
