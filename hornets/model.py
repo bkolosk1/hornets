@@ -29,6 +29,7 @@ class HorNet(nn.Module):
         self.comb_indices = []
         comb_possible = itertools.combinations(list(range(num_features)),
                                                order)
+        print(num_rules)
         for _ in range(num_rules):
             try:
                 self.comb_indices.append(next(comb_possible))
