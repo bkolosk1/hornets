@@ -24,6 +24,14 @@ pip install hornets
 pip install git+git@github.com:bkolosk1/hornets.git
 ```
 
+## Local Development Installation
+
+1. Install Poetry: `pip install poetry`  
+2. Clone the repo: `git clone git@github.com:bkolosk1/hornets.git && cd hornets`  
+3. Run: `poetry install`
+4. Test the installation with: `poetry run python examples/examples.py`
+
+
 ## Usage
 
 
