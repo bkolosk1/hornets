@@ -1,5 +1,12 @@
 # HorNets
 
+ [build](https://github.com/bkolosk1/hornets/actions/workflows/python-install.yml/badge.svg)
+ [lint](https://github.com/bkolosk1/hornets/actions/workflows/lint.yml/badge.svg)
+
+ [test](https://github.com/bkolosk1/hornets/actions/workflows/pytest.yml/badge.svg)
+
+
+
 **HorNets** is a Python package implementing the HorNets architecture of the ``HorNets: Learning from Discrete and Continuous Signals with Routing Neural Networks`` paper.
 
 ## Installation
