@@ -19,7 +19,7 @@ class E2EDatasetLoader(Dataset):
         return instance.to(torch.float)
 
 
-def generate_synthetic_data(num_features, num_instances=128, operation="xor"):
+def generate_synthetic_data(num_features, num_instances=128, operation="xor", random_seed = 42):
     """
     Generate synthetic datasets (X and y) for a specific logical operation.
 
@@ -32,6 +32,8 @@ def generate_synthetic_data(num_features, num_instances=128, operation="xor"):
     - X (np.ndarray): Generated feature matrix of shape (num_instances, num_features).
     - y (np.ndarray): Generated target array of shape (num_instances,).
     """
+    np.random.seed(random_seed)
+
     supported_operations = ["xor", "and", "not", "or", "xnor"]
     if operation not in supported_operations:
         raise ValueError(f"Unsupported operation: {operation}. Supported operations are {supported_operations}.")

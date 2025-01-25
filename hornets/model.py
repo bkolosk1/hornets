@@ -18,8 +18,6 @@ class HorNet(nn.Module):
         super(HorNet, self).__init__()
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
-        #layers = []
-
         self.num_features = num_features
         self.num_tars = outpt
         self.feature_names = feature_names
@@ -29,7 +27,6 @@ class HorNet(nn.Module):
         self.comb_indices = []
         comb_possible = itertools.combinations(list(range(num_features)),
                                                order)
-        print(num_rules)
         for _ in range(num_rules):
             try:
                 self.comb_indices.append(next(comb_possible))
@@ -50,7 +47,7 @@ class HorNet(nn.Module):
         self.initHAttention2 = torch.nn.Parameter(
             data=torch.ones(num_features))
         self.out_linear2 = torch.nn.Linear(num_features, outpt)
-
+    
     def polyClip(self, x, hard=False):
         x = torch.clamp(torch.pow(x, self.k), -1, 1)
         if hard:
