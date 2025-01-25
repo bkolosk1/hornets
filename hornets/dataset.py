@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from torch.utils.data import Dataset
 
+
 class E2EDatasetLoader(Dataset):
     def __init__(self, features, targets=None):
         self.features = features
@@ -19,8 +20,9 @@ class E2EDatasetLoader(Dataset):
         return instance.to(torch.float)
 
 
-
-def generate_synthetic_data(num_features, num_instances=128, operation="xor", random_seed = 42):
+def generate_synthetic_data(
+    num_features, num_instances=128, operation="xor", random_seed=42
+):
     """
     Generate synthetic datasets (X and y) for a specific logical operation.
 
@@ -37,7 +39,9 @@ def generate_synthetic_data(num_features, num_instances=128, operation="xor", ra
 
     supported_operations = ["xor", "and", "not", "or", "xnor"]
     if operation not in supported_operations:
-        raise ValueError(f"Unsupported operation: {operation}. Supported operations are {supported_operations}.")
+        raise ValueError(
+            f"Unsupported operation: {operation}. Supported operations are {supported_operations}."
+        )
 
     X = np.random.randint(0, 2, size=(num_instances, num_features))
 
