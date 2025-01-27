@@ -1,7 +1,5 @@
 import pytest
 import torch
-import numpy as np
-import logging
 from torch import nn
 from hornets import HorNet
 
