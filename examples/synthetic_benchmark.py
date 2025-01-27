@@ -1,7 +1,8 @@
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from hornets import HorNetClassifier, generate_synthetic_data
+from sklearn.model_selection import train_test_split
 from tqdm import trange
+
+from hornets import HorNetClassifier, generate_synthetic_data
 
 
 def synthetic_run_setup():
