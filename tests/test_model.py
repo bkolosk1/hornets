@@ -1,12 +1,12 @@
 import pytest
 import torch
 from torch import nn
-from hornets import HorNet
+from hornets import HorNetsArchitecture
 
 
 @pytest.fixture
 def hornet_default():
-    model = HorNet(
+    model = HorNetsArchitecture(
         dim=10,
         outpt=3,
         num_rules=5,

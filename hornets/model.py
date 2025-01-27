@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class HorNet(nn.Module):
+class HorNetsArchitecture(nn.Module):
     def __init__(
         self,
         dim,
@@ -20,7 +20,7 @@ class HorNet(nn.Module):
         order=5,
         device=torch.device("cpu"),
     ):
-        super(HorNet, self).__init__()
+        super(HorNetsArchitecture , self).__init__()
         self.device = device
         self.num_features = num_features
         self.num_tars = outpt
