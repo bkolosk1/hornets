@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import logging
 from torch import nn
-from hornet import HorNet
+from hornets import HorNet
 
 @pytest.fixture
 def hornet_default():
