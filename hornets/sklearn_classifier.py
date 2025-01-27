@@ -12,8 +12,8 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
 
-from .model import HorNet
-from .dataset import E2EDatasetLoader
+from hornets.model import HorNet
+from hornets.dataset import E2EDatasetLoader
 
 
 class HorNetClassifier(BaseEstimator, ClassifierMixin):
