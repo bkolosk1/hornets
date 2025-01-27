@@ -1,6 +1,7 @@
 # HorNets: Learning from Discrete and Continuous Signals with Routing Neural Networks
 
-![build](https://github.com/bkolosk1/hornets/actions/workflows/python-install.yml/badge.svg)  ![lint](https://github.com/bkolosk1/hornets/actions/workflows/lint.yml/badge.svg) ![test](https://github.com/bkolosk1/hornets/actions/workflows/pytest.yml/badge.svg)
+![build](https://github.com/bkolosk1/hornets/actions/workflows/python-install.yml/badge.svg)  ![lint](https://github.com/bkolosk1/hornets/actions/workflows/lint.yml/badge.svg) ![test](https://github.com/bkolosk1/hornets/actions/workflows/pytest.yml/badge.svg) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1HxBQRLPa-j54WYU6nxj9VgwLv1ywfzJ-?usp=sharing)
+
 
 
 
@@ -21,10 +22,12 @@ pip install hornets
 ### Using PyPI ``latest version``
 
 ```bash
-pip install git+git@github.com:bkolosk1/hornets.git
+pip install git+https://github.com/bkolosk1/hornets.git
 ```
 
-## Local Development Installation
+### Local Development Installation
+
+To install locally with `poetry` follow the following steps:
 
 1. Install Poetry: `pip install poetry`  
 2. Clone the repo: `git clone git@github.com:bkolosk1/hornets.git && cd hornets`  
