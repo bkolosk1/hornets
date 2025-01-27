@@ -64,7 +64,6 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
         self.random_state = random_state
         self.verbose = verbose
 
-        ## TO:DO change this to a parameter in the classifier.
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() and device == "cuda" else "cpu"
         )

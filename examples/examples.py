@@ -4,7 +4,7 @@ from hornets import HorNetClassifier, generate_synthetic_data
 
 
 def main():
-    num_features = 3
+    num_features = 64
     num_instances = 128
     operation = "xor"
     X, y = generate_synthetic_data(
@@ -23,7 +23,7 @@ def main():
         learning_rate=0.1,
         batch_size=10,
         stopping_crit=100,
-        num_epochs=300,
+        num_epochs=500,
         verbose=True,
     )
 
