@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from hornets.dataset import E2EDatasetLoader
-from hornets.model import HorNet
+from hornets.model import HorNetsArchitecture 
 
 
 class HorNetClassifier(BaseEstimator, ClassifierMixin):
@@ -161,7 +161,7 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
         if self.verbose:
             logging.info(f"Using combination order: {self.combination_order_}")
 
-        self.model_ = HorNet(
+        self.model_ = HorNetsArchitecture(
             dim=dim,
             outpt=otpt,
             num_rules=self.num_rules,
