@@ -1,6 +1,6 @@
 # HorNets: Learning from Discrete and Continuous Signals with Routing Neural Networks
 
-![build](https://github.com/bkolosk1/hornets/actions/workflows/python-install.yml/badge.svg)  ![lint](https://github.com/bkolosk1/hornets/actions/workflows/lint.yml/badge.svg) ![test](https://github.com/bkolosk1/hornets/actions/workflows/pytest.yml/badge.svg) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1HxBQRLPa-j54WYU6nxj9VgwLv1ywfzJ-?usp=sharing)
+[![arXiv](https://img.shields.io/badge/arXiv-2501.14346-b31b1b.svg)](https://arxiv.org/abs/2501.14346) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1HxBQRLPa-j54WYU6nxj9VgwLv1ywfzJ-?usp=sharing) ![build](https://github.com/bkolosk1/hornets/actions/workflows/python-install.yml/badge.svg)  ![lint](https://github.com/bkolosk1/hornets/actions/workflows/lint.yml/badge.svg) ![test](https://github.com/bkolosk1/hornets/actions/workflows/pytest.yml/badge.svg) 
 
 
 
