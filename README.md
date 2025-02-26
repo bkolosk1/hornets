@@ -117,13 +117,20 @@ print(classification_report(y_test, y_pred))
 Cite this work as:
 
 ```
-@misc{koloski2025hornetslearningdiscretecontinuous,
-      title={HorNets: Learning from Discrete and Continuous Signals with Routing Neural Networks}, 
-      author={Boshko koloski and Nada Lavrač and Blaž Škrlj},
-      year={2025},
-      eprint={2501.14346},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2501.14346}, 
+﻿@Article{Koloski2025,
+author={Koloski, Boshko
+and Lavra{\v{c}}, Nada
+and {\v{S}}krlj, Bla{\v{z}}},
+title={HorNets: learning from discrete and continuous signals with routing neural networks},
+journal={Machine Learning},
+year={2025},
+month={Feb},
+day={21},
+volume={114},
+number={4},
+pages={101},
+issn={1573-0565},
+doi={10.1007/s10994-024-06673-1},
+url={https://doi.org/10.1007/s10994-024-06673-1}
 }
 ```
