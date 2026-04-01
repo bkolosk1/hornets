@@ -12,7 +12,9 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from hornets.dataset import E2EDatasetLoader
-from hornets.model import HorNetsArchitecture 
+from hornets.model import HorNetsArchitecture
+
+logger = logging.getLogger(__name__)
 
 
 class HorNetClassifier(BaseEstimator, ClassifierMixin):
@@ -81,9 +83,6 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
             logging.basicConfig(level=logging.WARNING)
 
     def _set_random_state(self):
-        """
-        Sets the random seed for numpy, torch, and random modules for reproducibility.
-        """
         if self.random_state is not None:
             np.random.seed(self.random_state)
             torch.manual_seed(self.random_state)
@@ -95,36 +94,25 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
             torch.backends.cudnn.benchmark = False
 
     def _augment_features_with_synthetic(self, features: np.ndarray) -> np.ndarray:
-        """
-        Augments the feature matrix with synthetic features based on combinations.
-
-        Parameters:
-            features (np.ndarray): Original feature matrix.
-
-        Returns:
-            np.ndarray: Augmented feature matrix with synthetic features.
-        """
-        joint_space = np.zeros((features.shape[0], self.order + features.shape[1]))
-
         if isinstance(features, np.matrix):
-            joint_space[: features.shape[0], : features.shape[1]] = features[:, :]
+            features = np.asarray(features)
         else:
             try:
-                joint_space[: features.shape[0], : features.shape[1]] = features[
-                    :, :
-                ].todense()
+                features = features.todense()
+                features = np.asarray(features)
             except AttributeError:
-                joint_space[: features.shape[0], : features.shape[1]] = features[:, :]
-        return joint_space
+                pass
 
-    def fit(self, X: np.ndarray, y: Any, upsample: int = 0) -> "HorNetClassifier":
+        synth_cols = np.zeros((features.shape[0], self.order))
+        return np.hstack([features, synth_cols])
+
+    def fit(self, X: np.ndarray, y: Any) -> "HorNetClassifier":
         """
         Fit the HorNet classifier according to the given training data.
 
         Parameters:
             X (np.ndarray): Training feature matrix.
             y (array-like): Target values.
-            upsample (int, default=0): Number of upsampled samples to include.
 
         Returns:
             self
@@ -150,7 +138,7 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
             train_dataset,
             batch_size=self.batch_size,
             shuffle=True,
-            num_workers=1,
+            num_workers=0,
             drop_last=True,
         )
 
@@ -159,7 +147,7 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
         self.combination_order_ = min(dim, self.order)
 
         if self.verbose:
-            logging.info(f"Using combination order: {self.combination_order_}")
+            logger.info(f"Using combination order: {self.combination_order_}")
 
         self.model_ = HorNetsArchitecture(
             dim=dim,
@@ -179,8 +167,8 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
         self.num_params_ = sum(p.numel() for p in self.model_.parameters())
 
         if self.verbose:
-            logging.info(f"Number of parameters: {self.num_params_}")
-            logging.info(f"Starting training for {self.num_epochs} epochs")
+            logger.info(f"Number of parameters: {self.num_params_}")
+            logger.info(f"Starting training for {self.num_epochs} epochs")
 
         self.model_.train()
         self.stopping_iteration_ = 0
@@ -191,7 +179,7 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
         ):
             if self.stopping_iteration_ > self.stopping_crit:
                 if self.verbose:
-                    logging.info("Early stopping triggered.")
+                    logger.info("Early stopping triggered.")
                 break
 
             epoch_losses = []
@@ -228,15 +216,14 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
                 self.stopping_iteration_ += 1
 
             if self.verbose:
-                logging.info(
+                logger.info(
                     f"Epoch {epoch+1}/{self.num_epochs} - Mean Loss: {mean_loss:.4f} "
                     f"- Stopping Iteration: {self.stopping_iteration_}"
                 )
-                # self.get_top_rules(top_k=3)
 
             if mean_loss <= 0.01:
                 if self.verbose:
-                    logging.info("Desired loss achieved. Stopping training.")
+                    logger.info("Desired loss achieved. Stopping training.")
                 break
 
         return self
@@ -257,7 +244,9 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
         X_aug = self._augment_features_with_synthetic(X)
 
         test_dataset = E2EDatasetLoader(X_aug, None)
-        test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False)
+        test_dataloader = DataLoader(
+            test_dataset, batch_size=self.batch_size, shuffle=False
+        )
 
         self.model_.eval()
         predictions = []
@@ -267,7 +256,7 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
                 batch_features = batch_features.float().to(self.device)
                 output = self.model_(batch_features)
                 pred = torch.argmax(output, dim=1).cpu().numpy()
-                predictions.append(pred[0])
+                predictions.extend(pred)
 
         predictions = self.label_encoder_.inverse_transform(predictions)
         return predictions
@@ -280,18 +269,17 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
             X (np.ndarray): Input samples.
 
         Returns:
-            np.ndarray: Predicted class probabilities.
+            np.ndarray: Predicted class probabilities of shape (n_samples, n_classes).
         """
-        # Ensure the model is fitted
         check_is_fitted(self, "model_")
         X = check_array(X)
 
-        # Augment features with synthetic combinations
         X_aug = self._augment_features_with_synthetic(X)
 
-        # Create dataset and dataloader for prediction
         test_dataset = E2EDatasetLoader(X_aug, None)
-        test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False)
+        test_dataloader = DataLoader(
+            test_dataset, batch_size=self.batch_size, shuffle=False
+        )
 
         self.model_.eval()
         probabilities = []
@@ -301,37 +289,41 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
                 batch_features = batch_features.float().to(self.device)
                 output = self.model_(batch_features)
                 prob = nn.functional.softmax(output, dim=1).cpu().numpy()
-                probabilities.append(prob[0])
+                probabilities.append(prob)
 
-        return np.array(probabilities)
+        return np.vstack(probabilities)
 
-    def get_top_rules(self, top_k: int = 3) -> None:
+    def get_top_rules(self, top_k: int = 3) -> list:
         """
-        Logs the top K feature combinations based on their scores.
+        Returns the top K feature combinations based on their scores.
 
         Parameters:
             top_k (int, optional): Number of top combinations to display. Default is 3.
+
+        Returns:
+            list[dict]: List of dicts with 'features' and 'score' keys.
         """
         if self.feature_names_ is None:
-            logging.warning("Feature names are not provided.")
             feature_names = [f"Feature_{i}" for i in range(self.model_.num_features)]
         else:
             feature_names = self.feature_names_
 
         if not hasattr(self.model_, "comb_scores"):
-            logging.warning("Combination scores are not available.")
-            return
+            logger.warning("Combination scores are not available.")
+            return []
 
         combination_scores = self.model_.comb_scores.detach().cpu().numpy()
 
-        # Identify top K combinations based on scores
         top_indices = np.argsort(combination_scores)[::-1][:top_k]
+        rules = []
         for idx in top_indices:
             combination = self.model_.comb_indices[idx]
             feature_combination = [
                 feature_names[i] for i in combination if "synth" not in feature_names[i]
             ]
-            score = combination_scores[idx]
-            logging.info(
+            score = float(combination_scores[idx])
+            rules.append({"features": feature_combination, "score": score})
+            logger.info(
                 f"Feature Combination: {feature_combination}, Score: {score:.4f}"
             )
+        return rules

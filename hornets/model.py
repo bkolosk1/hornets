@@ -20,7 +20,7 @@ class HorNetsArchitecture(nn.Module):
         order=5,
         device=torch.device("cpu"),
     ):
-        super(HorNetsArchitecture , self).__init__()
+        super().__init__()
         self.device = device
         self.num_features = num_features
         self.num_tars = outpt
@@ -40,7 +40,7 @@ class HorNetsArchitecture(nn.Module):
             data=torch.randn(order, len(self.comb_indices)), requires_grad=True
         )
         self.out_linear = torch.nn.Linear(len(self.comb_indices), outpt)
-        self.comb_scores = torch.zeros(len(self.comb_indices))
+        self.register_buffer("comb_scores", torch.zeros(len(self.comb_indices)))
         self.linW = torch.nn.Parameter(data=torch.ones(len(self.comb_indices)))
         self.linF = torch.nn.Parameter(data=torch.ones(num_features))
         self.activation = activation
@@ -73,9 +73,13 @@ class HorNetsArchitecture(nn.Module):
         if num_samples is None:
             num_samples = len(self.comb_indices)
 
-        comb_pred = torch.zeros((x.shape[0], len(self.comb_indices)))
-        cat_subspace = torch.randperm(len(self.comb_indices))[:num_samples]
-        cat_mask = torch.zeros(len(self.comb_indices))
+        comb_pred = torch.zeros(
+            (x.shape[0], len(self.comb_indices)), device=x.device
+        )
+        cat_subspace = torch.randperm(
+            len(self.comb_indices), device=x.device
+        )[:num_samples]
+        cat_mask = torch.zeros(len(self.comb_indices), device=x.device)
         cat_mask[cat_subspace] = 1
 
         for enx, combination in enumerate(self.comb_indices):
@@ -91,15 +95,21 @@ class HorNetsArchitecture(nn.Module):
 
         comb_pred = self.dp(comb_pred)
         attn_comb = F.softmax(comb_pred, dim=1)
-        self.comb_scores += torch.mean(attn_comb, axis=0)
-        attn_comb = attn_comb.to(self.device)
+        self.comb_scores += torch.mean(attn_comb, axis=0).detach()
         out = self.out_linear(attn_comb)
         return F.log_softmax(out, dim=1)
 
-    def get_rules(self):
-        sindices = np.argsort(self.comb_scores.detach().numpy())[::-1][:3]
+    def reset_comb_scores(self):
+        self.comb_scores.zero_()
+
+    def get_rules(self, top_k=3):
+        scores = self.comb_scores.detach().cpu().numpy()
+        sindices = np.argsort(scores)[::-1][:top_k]
+        rules = []
         for j in sindices:
             features = [str(self.feature_names[x]) for x in list(self.comb_indices[j])]
             features = [x for x in features if "synth" not in x]
-            score = self.comb_scores[j]
+            score = float(scores[j])
+            rules.append({"features": features, "score": score})
             print(f"Feature comb: {features}, score: {score}")
+        return rules
