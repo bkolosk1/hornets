@@ -86,7 +86,17 @@ print("Classification Report:")
 print(classification_report(y_test, y_pred))
 ```
 
+### Extracting Embeddings
 
+After training, you can extract learned representations using `transform()`:
+
+```python
+# Extract embeddings (pre-classification hidden representations)
+embeddings = classifier.transform(X_test)
+print(embeddings.shape)  # (n_samples, num_rules) for binary input
+```
+
+For binary inputs, embeddings are the attention-weighted combination scores over feature rules. For continuous inputs, they are the attention-reweighted features. See `examples/tox171_evaluation.py` for a full example with t-SNE, UMAP, and PCA visualization on a real dataset.
 
 
 ## Hyperparameters
