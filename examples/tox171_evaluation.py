@@ -147,7 +147,7 @@ def main():
     fig.legend(handles, labels, loc="lower center", ncol=len(classes) * 2, fontsize=7)
 
     print(f"\nMean accuracy: {np.mean(fold_accs):.4f} +/- {np.std(fold_accs):.4f}")
-    print(f"\nOverall classification report:")
+    print("\nOverall classification report:")
     print(classification_report(all_y_true, all_y_pred, target_names=[f"Class {c}" for c in classes]))
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.98])
