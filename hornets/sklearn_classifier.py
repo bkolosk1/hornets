@@ -293,6 +293,41 @@ class HorNetClassifier(BaseEstimator, ClassifierMixin):
 
         return np.vstack(probabilities)
 
+    def transform(self, X: np.ndarray) -> np.ndarray:
+        """
+        Extract embeddings for samples in X.
+
+        For binary inputs, returns the attention-weighted combination scores
+        (shape: n_samples x num_rules). For continuous inputs, returns the
+        attention-reweighted features (shape: n_samples x num_features_aug).
+
+        Parameters:
+            X (np.ndarray): Input samples.
+
+        Returns:
+            np.ndarray: Embedding matrix.
+        """
+        check_is_fitted(self, "model_")
+        X = check_array(X)
+
+        X_aug = self._augment_features_with_synthetic(X)
+
+        test_dataset = E2EDatasetLoader(X_aug, None)
+        test_dataloader = DataLoader(
+            test_dataset, batch_size=self.batch_size, shuffle=False
+        )
+
+        self.model_.eval()
+        embeddings = []
+
+        with torch.no_grad():
+            for batch_features in test_dataloader:
+                batch_features = batch_features.float().to(self.device)
+                emb = self.model_.embed(batch_features)
+                embeddings.append(emb.cpu().numpy())
+
+        return np.vstack(embeddings)
+
     def get_top_rules(self, top_k: int = 3) -> list:
         """
         Returns the top K feature combinations based on their scores.

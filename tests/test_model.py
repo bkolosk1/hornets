@@ -158,6 +158,33 @@ class TestForward:
         assert torch.all(model.comb_scores == 0)
 
 
+class TestEmbed:
+    def test_binary_embed_shape(self, model):
+        x = torch.randint(0, 2, (4, 10)).float()
+        emb = model.embed(x)
+        assert emb.shape == (4, len(model.comb_indices))
+
+    def test_continuous_embed_shape(self, model):
+        x = torch.randn(4, 10)
+        emb = model.embed(x)
+        assert emb.shape == (4, 10)
+
+    def test_binary_embed_is_softmax(self, model):
+        model.eval()
+        x = torch.randint(0, 2, (4, 10)).float()
+        emb = model.embed(x)
+        sums = emb.sum(dim=1)
+        assert torch.allclose(sums, torch.ones_like(sums), atol=1e-5)
+
+    def test_embed_matches_forward_route(self, model):
+        model.eval()
+        x = torch.randint(0, 2, (4, 10)).float()
+        emb = model.embed(x)
+        out = model.forward(x)
+        # Forward applies out_linear + log_softmax on top of embed
+        assert emb.shape[0] == out.shape[0]
+
+
 class TestBackprop:
     def test_gradients_exist(self, model):
         x = torch.randint(0, 2, (4, 10)).float()

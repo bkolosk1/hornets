@@ -62,13 +62,11 @@ class HorNetsArchitecture(nn.Module):
             return 1
         return 0
 
-    def forward(self, x, num_samples=None):
+    def _get_embedding(self, x, num_samples=None):
         if self.get_route(x) == 0:
-            logging.info("Taking cont. route ..")
             x = torch.nn.functional.normalize(x)
             x = x.view(-1, self.num_features)
-            x = self.polyClip(self.initHAttention) * x
-            return self.out_linear2(x)
+            return self.polyClip(self.initHAttention) * x
 
         if num_samples is None:
             num_samples = len(self.comb_indices)
@@ -94,10 +92,20 @@ class HorNetsArchitecture(nn.Module):
                     comb_pred[:, enx] = self.ract(torch.matmul(comb_subspace, params))
 
         comb_pred = self.dp(comb_pred)
-        attn_comb = F.softmax(comb_pred, dim=1)
-        self.comb_scores += torch.mean(attn_comb, axis=0).detach()
-        out = self.out_linear(attn_comb)
+        return F.softmax(comb_pred, dim=1)
+
+    def forward(self, x, num_samples=None):
+        embedding = self._get_embedding(x, num_samples)
+
+        if self.get_route(x) == 0:
+            return self.out_linear2(embedding)
+
+        self.comb_scores += torch.mean(embedding, axis=0).detach()
+        out = self.out_linear(embedding)
         return F.log_softmax(out, dim=1)
+
+    def embed(self, x, num_samples=None):
+        return self._get_embedding(x, num_samples)
 
     def reset_comb_scores(self):
         self.comb_scores.zero_()

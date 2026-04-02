@@ -134,6 +134,28 @@ class TestPredictProba:
         assert np.all(proba >= 0)
 
 
+class TestTransform:
+    def test_shape(self):
+        X_train, X_test, y_train, _ = get_data()
+        model = get_model(num_epochs=5)
+        model.fit(X_train, y_train)
+        emb = model.transform(X_test)
+        assert emb.shape[0] == len(X_test)
+
+    def test_rows_sum_to_one(self):
+        X_train, X_test, y_train, _ = get_data()
+        model = get_model(num_epochs=5)
+        model.fit(X_train, y_train)
+        emb = model.transform(X_test)
+        np.testing.assert_allclose(emb.sum(axis=1), 1.0, atol=1e-5)
+
+    def test_before_fit_raises(self):
+        model = get_model()
+        X = np.random.rand(5, NUM_FEATURES)
+        with pytest.raises(Exception):
+            model.transform(X)
+
+
 class TestGetTopRules:
     def test_returns_list(self):
         X_train, _, y_train, _ = get_data()
