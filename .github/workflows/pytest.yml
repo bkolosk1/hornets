@@ -3,11 +3,11 @@ name: Run Pytests
 on:
   push:
     paths:
-      - 'hornets/hornets/**'
+      - 'hornets/**'
       - 'tests/**'
   pull_request:
     paths:
-      - 'hornets/hornets/**'
+      - 'hornets/**'
       - 'tests/**'
 
 jobs:
@@ -16,22 +16,17 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
 
     - name: Install Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.11
-
-    - name: Install Poetry
-      run: |
-        pip install poetry
+      run: uv python install 3.11
 
     - name: Install dependencies
-      run: |
-        poetry install
+      run: uv sync
 
     - name: Run Pytest
       run: |
-        poetry run pytest tests/
-
+        uv run pytest tests/
