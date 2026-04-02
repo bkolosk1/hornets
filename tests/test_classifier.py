@@ -82,12 +82,12 @@ class TestPredict:
         assert acc >= 0.90
 
     @pytest.mark.parametrize("op", ["and", "or"])
-    def test_accuracy_relaxed(self, op):
+    def test_accuracy_all_combs(self, op):
         X_train, X_test, y_train, y_test = get_data(op)
-        model = get_model(num_epochs=500)
+        model = get_model(comb_samples_fp=None)
         model.fit(X_train, y_train)
         acc = accuracy_score(model.predict(X_test), y_test)
-        assert acc >= 0.60
+        assert acc >= 0.90
 
     def test_predict_shape(self):
         X_train, X_test, y_train, _ = get_data()
