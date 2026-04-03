@@ -31,12 +31,12 @@ pip install git+https://github.com/bkolosk1/hornets.git
 
 ### Local Development Installation
 
-To install locally with `poetry` follow the following steps:
+To install locally with `uv` follow the following steps:
 
-1. Install Poetry: `pip install poetry`  
+1. Install uv: `pip install uv`  
 2. Clone the repo: `git clone git@github.com:bkolosk1/hornets.git && cd hornets`  
-3. Run: `poetry install`
-4. Test the installation with: `poetry run python examples/examples.py`
+3. Run: `uv sync`
+4. Test the installation with: `uv run python examples/examples.py`
 
 
 ## Usage
