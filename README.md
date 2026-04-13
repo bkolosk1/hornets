@@ -31,12 +31,12 @@ pip install git+https://github.com/bkolosk1/hornets.git
 
 ### Local Development Installation
 
-To install locally with `poetry` follow the following steps:
+To install locally with `uv` follow the following steps:
 
-1. Install Poetry: `pip install poetry`  
+1. Install uv: `pip install uv`  
 2. Clone the repo: `git clone git@github.com:bkolosk1/hornets.git && cd hornets`  
-3. Run: `poetry install`
-4. Test the installation with: `poetry run python examples/examples.py`
+3. Run: `uv sync`
+4. Test the installation with: `uv run python examples/examples.py`
 
 
 ## Usage
@@ -86,7 +86,17 @@ print("Classification Report:")
 print(classification_report(y_test, y_pred))
 ```
 
+### Extracting Embeddings
 
+After training, you can extract learned representations using `transform()`:
+
+```python
+# Extract embeddings (pre-classification hidden representations)
+embeddings = classifier.transform(X_test)
+print(embeddings.shape)  # (n_samples, num_rules) for binary input
+```
+
+For binary inputs, embeddings are the attention-weighted combination scores over feature rules. For continuous inputs, they are the attention-reweighted features. See `examples/tox171_evaluation.py` for a full example with t-SNE, UMAP, and PCA visualization on a real dataset.
 
 
 ## Hyperparameters

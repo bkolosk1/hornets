@@ -32,6 +32,7 @@ def synthetic_run_setup():
                     learning_rate=0.1,
                     batch_size=16,
                     stopping_crit=100,
+                    comb_samples_fp=48,
                     num_epochs=300,
                     verbose=True,
                 )

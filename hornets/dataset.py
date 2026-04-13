@@ -7,17 +7,20 @@ class E2EDatasetLoader(Dataset):
     def __init__(self, features, targets=None):
         self.features = features
         self.targets = targets
+        if targets is not None and len(features) != len(targets):
+            raise ValueError(
+                f"Features and targets length mismatch: {len(features)} vs {len(targets)}"
+            )
 
     def __len__(self):
         return self.features.shape[0]
 
     def __getitem__(self, index):
-        part = self.features[index]
-        instance = torch.from_numpy(part)
+        instance = torch.from_numpy(self.features[index]).float()
         if self.targets is not None:
-            target = torch.from_numpy(np.array(self.targets[index]))
-            return instance.to(torch.float), target
-        return instance.to(torch.float)
+            target = torch.tensor(self.targets[index], dtype=torch.long)
+            return instance, target
+        return instance
 
 
 def generate_synthetic_data(
@@ -30,20 +33,20 @@ def generate_synthetic_data(
     - num_features (int): Number of features to use for synthetic data.
     - num_instances (int): Number of instances to generate for the dataset.
     - operation (str): Logical operation to generate data for (e.g., 'xor', 'and', 'not', 'or', 'xnor').
+    - random_seed (int): Random seed for reproducibility.
 
     Returns:
     - X (np.ndarray): Generated feature matrix of shape (num_instances, num_features).
     - y (np.ndarray): Generated target array of shape (num_instances,).
     """
-    np.random.seed(random_seed)
-
     supported_operations = ["xor", "and", "not", "or", "xnor"]
     if operation not in supported_operations:
         raise ValueError(
             f"Unsupported operation: {operation}. Supported operations are {supported_operations}."
         )
 
-    X = np.random.randint(0, 2, size=(num_instances, num_features))
+    rng = np.random.RandomState(random_seed)
+    X = rng.randint(0, 2, size=(num_instances, num_features))
 
     if operation == "xor":
         y = np.logical_xor(X[:, 0], X[:, 1]).astype(int)
